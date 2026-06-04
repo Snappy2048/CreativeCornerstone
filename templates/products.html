@@ -1,0 +1,58 @@
+{% extends "admin_base.html" %}
+{% block title %}Products — My Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Products</h1>
+<p class="page-sub">Manage products / store items.</p>
+
+<div class="panel accent-edge">
+    <div class="panel-head"><i data-lucide="package"></i><h3 id="formTitle">Add a Product</h3></div>
+    <form id="entityForm" method="POST" action="{{ url_for('add_product') }}" enctype="multipart/form-data">
+        <div class="form-grid">
+            <div class="field"><label>Name</label><input type="text" name="name" required placeholder="Product name..."></div>
+            <div class="field"><label>Price <span class="hint">(optional)</span></label><input type="number" name="price" step="0.01" placeholder="0.00"></div>
+            <div class="field"><label>Image</label>
+                <label class="file-drop"><span class="prev"><i data-lucide="image"></i></span><span class="ftxt">Choose an image…</span><input type="file" name="image" accept="image/*"></label>
+            </div>
+            <div class="field full"><label>Description</label><textarea name="description" placeholder="Describe the product..."></textarea></div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="check"></i> Save product</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="cancelEdit" style="display:none;" onclick="cancelEdit()"><i data-lucide="x"></i> Cancel edit</button>
+        </div>
+    </form>
+</div>
+
+<div class="panel">
+    <div class="panel-head"><i data-lucide="list"></i><h3>Existing products</h3></div>
+    <div class="items">
+        {% if products %}
+            {% for p in products %}
+            <div class="item">
+                <span class="thumb">
+                    {% if p.image %}{% set pi = p.image if p.image.startswith('http') else url_for('static', filename='uploads/' + p.image.replace('uploads/', '')) %}<img src="{{ pi }}" alt="">{% else %}<i data-lucide="package"></i>{% endif %}
+                </span>
+                <div class="meta"><h4>{{ p.name }}</h4><p>{% if p.price %}${{ p.price }} · {% endif %}{{ p.description or '' }}</p></div>
+                <div class="ops">
+                    <button class="op-btn" title="Edit" onclick="fillEdit(this)"
+                        data-id="{{ p.id }}" data-name="{{ p.name|e }}" data-description="{{ p.description|e }}" data-price="{{ p.price|e }}"><i data-lucide="pencil"></i></button>
+                    <form method="POST" action="{{ url_for('delete_product', id=p.id) }}" style="display:inline;" onsubmit="return confirm('Delete this product?');">
+                        <button class="op-btn danger" type="submit" title="Delete"><i data-lucide="trash-2"></i></button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty"><i data-lucide="package"></i><p>No products yet.</p></div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.EDIT_BASE = "/edit_product/";
+    window.ADD_ACTION = "{{ url_for('add_product') }}";
+    window.ADD_TITLE = "Add a Product"; window.ADD_SUBMIT = "Save product"; window.ENTITY_LABEL = "Product";
+</script>
+{% endblock %}

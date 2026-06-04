@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ blog.title if blog else 'Post' }} — Creative Cornerstone{% endblock %}
+
+{% block head %}
+<style>
+    .post-wrap { display: grid; grid-template-columns: 1fr 320px; gap: 40px; align-items: start; }
+    .post { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .post .cover { width: 100%; aspect-ratio: 21/9; object-fit: cover; }
+    .post .cover-ph { aspect-ratio: 21/9; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent-soft), var(--surface-2)); }
+    .post .cover-ph svg { width: 60px; height: 60px; color: var(--accent); opacity: .6; }
+    .post .yt { position: relative; padding-top: 56.25%; overflow: hidden; }
+    .post .yt iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .post .pad { padding: clamp(24px, 4vw, 44px); }
+    .post .date { font-family: var(--font-head); font-size: .82rem; color: var(--accent); font-weight: 600; display: inline-flex; gap: 8px; align-items: center; }
+    .post h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin: 14px 0 22px; }
+    .post .body { color: var(--text); opacity: .92; white-space: pre-wrap; line-height: 1.85; }
+    .side h4 { font-family: var(--font-head); margin-bottom: 16px; font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .side a { display: block; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface); margin-bottom: 12px; transition: .3s var(--ease); }
+    .side a:hover { border-color: var(--accent); transform: translateX(4px); }
+    .side a .d { font-size: .72rem; color: var(--accent); font-family: var(--font-head); }
+    .side a h5 { font-family: var(--font-head); font-size: .98rem; margin-top: 4px; }
+    @media (max-width: 900px) { .post-wrap { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="section container" style="padding-top: calc(var(--nav-h) + 50px);">
+    <a href="{{ url_for('home_blogs') }}" class="btn btn-ghost reveal" style="margin-bottom:28px;"><i data-lucide="arrow-left"></i> All posts</a>
+    <div class="post-wrap">
+        <article class="post reveal">
+            {% if blog %}
+                {% if blog.youtube_link %}
+                    {% set yt = blog.youtube_link.split('v=')[1].split('&')[0] if 'v=' in blog.youtube_link else blog.youtube_link.split('/')[-1] %}
+                    <div class="yt"><iframe src="https://www.youtube.com/embed/{{ yt }}" title="{{ blog.title }}" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+                {% elif blog.thumbnail %}
+                    {% set bimg = blog.thumbnail if blog.thumbnail.startswith('http') else url_for('static', filename='uploads/' + blog.thumbnail.replace('uploads/', '')) %}
+                    <img class="cover" src="{{ bimg }}" referrerpolicy="no-referrer" alt="{{ blog.title }}">
+                {% else %}
+                    <div class="cover-ph"><i data-lucide="pen-line"></i></div>
+                {% endif %}
+                <div class="pad">
+                    {% if blog.created_at %}<span class="date date-display" data-raw-date="{{ blog.created_at }}"><i data-lucide="calendar"></i> <span>Posted on {{ blog.created_at }}</span></span>{% endif %}
+                    <h1>{{ blog.title }}</h1>
+                    <div class="body">{{ blog.content }}</div>
+                </div>
+            {% else %}
+                <div class="pad" style="text-align:center;"><i data-lucide="search-x" style="width:54px;height:54px;margin:0 auto 14px;color:var(--accent);"></i><h1>Post not found</h1><p style="color:var(--muted);">This post doesn't exist.</p></div>
+            {% endif %}
+        </article>
+        <aside class="side reveal" data-delay="120">
+            <h4>More posts</h4>
+            {% for b in other_blogs[:6] %}
+            <a href="{{ url_for('blog_details', id=b.id) }}"><span class="d date-display" data-raw-date="{{ b.created_at }}"><span>{{ b.created_at }}</span></span><h5>{{ b.title }}</h5></a>
+            {% endfor %}
+        </aside>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".date-display").forEach(function (el) {
+            var raw = el.getAttribute("data-raw-date");
+            var span = el.querySelector("span");
+            if (!raw || !span) return;
+            var d = new Date(String(raw).replace(" ", "T"));
+            if (isNaN(d.getTime())) return;
+            var p = function (n) { return String(n).padStart(2, "0"); };
+            var h = d.getHours(), ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12;
+            var pre = el.classList.contains("date") ? "Posted on " : "";
+            span.textContent = pre + p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + d.getFullYear();
+        });
+    });
+</script>
+{% endblock %}

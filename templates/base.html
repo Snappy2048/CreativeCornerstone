@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-accent="aurora">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Creative Cornerstone{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% include 'flash_messages.html' %}
+    <div class="bg-orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+    <div class="bg-grid"></div>
+
+    <header class="nav">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="brand"><span class="mark"><i data-lucide="rocket"></i></span> Creative Cornerstone</a>
+            <nav class="nav-links" id="navLinks">
+                <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}">Home</a>
+                <a href="{{ url_for('home_games') }}" class="{{ 'active' if request.endpoint == 'home_games' else '' }}">Ctrl+Alt Achieve</a>
+                <a href="{{ url_for('home_blogs') }}" class="{{ 'active' if request.endpoint in ['home_blogs', 'blog_details'] else '' }}">Blog</a>
+                <a href="{{ url_for('home_projects') }}" class="{{ 'active' if request.endpoint == 'home_projects' else '' }}">Project</a>
+                <a href="/home/products" class="{{ 'active' if request.endpoint == 'home_products' else '' }}">Shop</a>
+            </nav>
+            <div class="nav-tools">
+                <div class="palette-wrap">
+                    <button class="icon-btn" id="paletteToggle" aria-label="Change color theme"><i data-lucide="palette"></i></button>
+                    <div class="palette-menu" id="paletteMenu">
+                        <span class="swatch" data-set="aurora" title="Aurora"></span>
+                        <span class="swatch" data-set="sunset" title="Sunset"></span>
+                        <span class="swatch" data-set="emerald" title="Emerald"></span>
+                        <span class="swatch" data-set="ocean" title="Ocean"></span>
+                    </div>
+                </div>
+                <button class="icon-btn" id="themeToggle" aria-label="Toggle light/dark"><i data-lucide="sun" class="sun"></i><i data-lucide="moon" class="moon"></i></button>
+                <button class="icon-btn hamburger" id="hamburger" aria-label="Menu"><i data-lucide="menu"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div><h2>The Creative Cornerstone</h2><p>Let's build something amazing together.</p></div>
+                <div class="socials">
+                    <a href="#" aria-label="Twitter"><i data-lucide="twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+                    <a href="#" aria-label="Discord"><i data-lucide="message-circle"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">&copy; 2025 {{ profile.name if profile and profile.name else 'Creative Cornerstone' }}. All rights reserved.</div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

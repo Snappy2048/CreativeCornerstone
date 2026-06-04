@@ -1,0 +1,60 @@
+{% extends "admin_base.html" %}
+{% block title %}Games — My Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Games</h1>
+<p class="page-sub">Add and manage the games on Ctrl+Alt Achieve.</p>
+
+<div class="panel accent-edge">
+    <div class="panel-head"><i data-lucide="gamepad-2"></i><h3 id="formTitle">Add a New Game</h3></div>
+    <form id="entityForm" method="POST" action="{{ url_for('add_game') }}" enctype="multipart/form-data">
+        <div class="form-grid">
+            <div class="field"><label>Title</label><input type="text" name="title" required placeholder="Game title..."></div>
+            <div class="field"><label>Cover image</label>
+                <label class="file-drop"><span class="prev"><i data-lucide="image"></i></span><span class="ftxt">Choose an image…</span><input type="file" name="image" accept="image/*"></label>
+            </div>
+            <div class="field full"><label>Description</label><textarea name="description" placeholder="What's the game about?"></textarea></div>
+            <div class="field"><label>External link <span class="hint">(optional)</span></label><input type="url" name="link" placeholder="https://..."></div>
+            <div class="field"><label>Embed code <span class="hint">(optional, e.g. Scratch iframe)</span></label><input type="text" name="embed_code" placeholder="<iframe ...></iframe>"></div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="check"></i> Save game</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="cancelEdit" style="display:none;" onclick="cancelEdit()"><i data-lucide="x"></i> Cancel edit</button>
+        </div>
+    </form>
+</div>
+
+<div class="panel">
+    <div class="panel-head"><i data-lucide="list"></i><h3>Existing games</h3></div>
+    <div class="items">
+        {% if games %}
+            {% for g in games %}
+            <div class="item">
+                <span class="thumb">
+                    {% if g.image %}{% set gi = g.image if g.image.startswith('http') else url_for('static', filename='uploads/' + g.image.replace('uploads/', '')) %}<img src="{{ gi }}" alt="">{% else %}<i data-lucide="gamepad-2"></i>{% endif %}
+                </span>
+                <div class="meta"><h4>{{ g.title }}</h4><p>{{ g.description or 'No description' }}</p></div>
+                <div class="ops">
+                    <button class="op-btn" title="Edit" onclick="fillEdit(this)"
+                        data-id="{{ g.id }}" data-title="{{ g.title|e }}" data-description="{{ g.description|e }}"
+                        data-link="{{ g.link|e }}" data-embed_code="{{ g.embed_code|e }}"><i data-lucide="pencil"></i></button>
+                    <form method="POST" action="{{ url_for('delete_game', id=g.id) }}" style="display:inline;" onsubmit="return confirm('Delete this game?');">
+                        <button class="op-btn danger" type="submit" title="Delete"><i data-lucide="trash-2"></i></button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty"><i data-lucide="ghost"></i><p>No games yet.</p></div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.EDIT_BASE = "/edit_game/";
+    window.ADD_ACTION = "{{ url_for('add_game') }}";
+    window.ADD_TITLE = "Add a New Game"; window.ADD_SUBMIT = "Save game"; window.ENTITY_LABEL = "Game";
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Projects — Creative Cornerstone{% endblock %}
+
+{% block content %}
+<section class="section container" style="padding-top: calc(var(--nav-h) + 60px);">
+    <div class="head reveal">
+        <span class="eyebrow"><span class="dot"></span> Build Log</span>
+        <h2>My <span class="grad-text">Projects</span></h2>
+        <p>Here is a showcase of my coding adventures. From small scripts to full-stack applications, explore what I've been building.</p>
+    </div>
+
+    {% if projects %}
+        {% for project in projects %}
+        <div class="project reveal" data-delay="{{ (loop.index0 % 6) * 80 }}">
+            <div class="project-media">
+                {% if project.image %}
+                    {% set pimg = project.image if project.image.startswith('http') else url_for('static', filename='uploads/' + project.image.replace('uploads/', '')) %}
+                    <img src="{{ pimg }}" referrerpolicy="no-referrer" alt="{{ project.title }}"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='grid';">
+                    <span class="ph" style="display:none;"><i data-lucide="code-xml"></i></span>
+                {% else %}
+                    <span class="ph"><i data-lucide="code-xml"></i></span>
+                {% endif %}
+            </div>
+            <div class="project-body">
+                <span class="tag">Project</span>
+                <h3>{{ project.title }}</h3>
+                <p>{{ project.description }}</p>
+                {% if project.github_link %}
+                <a href="{{ project.github_link }}" target="_blank" class="btn btn-ghost"><i data-lucide="github"></i> GitHub</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="card"><div class="card-body" style="text-align:center;padding:60px;">
+            <i data-lucide="laptop" style="width:54px;height:54px;margin:0 auto 14px;color:var(--accent);"></i>
+            <h3>Coming soon</h3><p>Working on some cool stuff. Updates coming soon!</p>
+        </div></div>
+    {% endif %}
+</section>
+{% endblock %}

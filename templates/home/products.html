@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Shop — Creative Cornerstone{% endblock %}
+
+{% block head %}
+<style>
+    .price-badge { display:inline-flex; align-items:center; gap:6px; font-family:var(--font-head); font-weight:700; color:#fff; background:linear-gradient(110deg,var(--a1),var(--a3)); padding:6px 14px; border-radius:999px; font-size:.95rem; }
+    .price-badge.free { background:var(--surface-2); color:var(--accent); border:1px solid var(--border); }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="section container" style="padding-top: calc(var(--nav-h) + 60px);">
+    <div class="head reveal">
+        <span class="eyebrow"><span class="dot"></span> Store</span>
+        <h2>The <span class="grad-text">Shop</span></h2>
+        <p>Cha-Ching! Products and creations from the Creative Cornerstone.</p>
+    </div>
+
+    <div class="grid cols-3">
+        {% if products %}
+            {% for product in products %}
+            <div class="card reveal" data-delay="{{ (loop.index0 % 6) * 80 }}">
+                {% if product.image %}
+                    {% set pimg = product.image if product.image.startswith('http') else url_for('static', filename='uploads/' + product.image.replace('uploads/', '')) %}
+                    <div class="thumb"><img src="{{ pimg }}" alt="{{ product.name }}"></div>
+                {% else %}
+                    <div class="thumb"><span class="ph"><i data-lucide="package"></i></span></div>
+                {% endif %}
+                <div class="card-body">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                        <span class="tag">Product</span>
+                        {% if product.price is not none and product.price != '' %}
+                        <span class="price-badge"><i data-lucide="tag"></i> ${{ product.price }}</span>
+                        {% else %}
+                        <span class="price-badge free">Free</span>
+                        {% endif %}
+                    </div>
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="card" style="grid-column:1/-1;"><div class="card-body" style="text-align:center;padding:60px;">
+                <i data-lucide="package" style="width:54px;height:54px;margin:0 auto 14px;color:var(--accent);"></i>
+                <h3>No products yet</h3><p>Add products from your dashboard and they'll appear here.</p>
+            </div></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

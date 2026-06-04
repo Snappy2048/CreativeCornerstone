@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Blog — Creative Cornerstone{% endblock %}
+
+{% block content %}
+<section class="section container" style="padding-top: calc(var(--nav-h) + 60px);">
+    <div class="head reveal">
+        <span class="eyebrow"><span class="dot"></span> Journal</span>
+        <h2>The <span class="grad-text">Blog</span></h2>
+        <p>Welcome to my blog! Here I share my journey, tutorials, and thoughts on the latest in tech and gaming. Dive in and explore my stories.</p>
+    </div>
+
+    <div class="blog-list">
+        {% if blogs %}
+            {% for blog in blogs %}
+            <a href="{{ url_for('blog_details', id=blog.id) }}" class="card blog-card reveal" data-delay="{{ (loop.index0 % 6) * 60 }}">
+                <div class="media">
+                    {% if blog.youtube_link %}
+                        {% set yt = blog.youtube_link.split('v=')[1].split('&')[0] if 'v=' in blog.youtube_link else blog.youtube_link.split('/')[-1] %}
+                        <img src="https://img.youtube.com/vi/{{ yt }}/hqdefault.jpg" alt="{{ blog.title }}">
+                        <span class="ph" style="position:absolute;"><i data-lucide="play-circle"></i></span>
+                    {% elif blog.thumbnail %}
+                        {% set bimg = blog.thumbnail if blog.thumbnail.startswith('http') else url_for('static', filename='uploads/' + blog.thumbnail.replace('uploads/', '')) %}
+                        <img src="{{ bimg }}" referrerpolicy="no-referrer" alt="{{ blog.title }}">
+                    {% else %}
+                        <span class="ph"><i data-lucide="pen-line"></i></span>
+                    {% endif %}
+                </div>
+                <div class="content">
+                    {% if blog.created_at %}
+                    <span class="date date-display" data-raw-date="{{ blog.created_at }}"><i data-lucide="calendar"></i> <span>Posted on {{ blog.created_at }}</span></span>
+                    {% endif %}
+                    <h3>{{ blog.title }}</h3>
+                    <p>{{ blog.content }}</p>
+                    <span class="read-more">Read More <i data-lucide="arrow-right"></i></span>
+                </div>
+            </a>
+            {% endfor %}
+        {% else %}
+            <div class="card"><div class="card-body" style="text-align:center;padding:60px;">
+                <i data-lucide="mug-hot" style="width:54px;height:54px;margin:0 auto 14px;color:var(--accent);"></i>
+                <h3>No stories yet</h3><p>Check back later for updates!</p>
+            </div></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".date-display").forEach(function (el) {
+            var raw = el.getAttribute("data-raw-date");
+            var span = el.querySelector("span");
+            if (!raw || !span) return;
+            var d = new Date(String(raw).replace(" ", "T"));
+            if (isNaN(d.getTime())) return;
+            var p = function (n) { return String(n).padStart(2, "0"); };
+            var h = d.getHours(), ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12;
+            span.textContent = "Posted on " + p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + d.getFullYear() + " · " + h + ":" + p(d.getMinutes()) + " " + ap;
+        });
+    });
+</script>
+{% endblock %}

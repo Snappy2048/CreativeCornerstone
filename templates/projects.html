@@ -1,0 +1,58 @@
+{% extends "admin_base.html" %}
+{% block title %}Projects — My Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Projects</h1>
+<p class="page-sub">Showcase your coding projects.</p>
+
+<div class="panel accent-edge">
+    <div class="panel-head"><i data-lucide="folder-git-2"></i><h3 id="formTitle">Add a Project</h3></div>
+    <form id="entityForm" method="POST" action="{{ url_for('add_project') }}" enctype="multipart/form-data">
+        <div class="form-grid">
+            <div class="field"><label>Title</label><input type="text" name="title" required placeholder="Project title..."></div>
+            <div class="field"><label>GitHub link <span class="hint">(optional)</span></label><input type="url" name="github_link" placeholder="https://github.com/..."></div>
+            <div class="field"><label>Image</label>
+                <label class="file-drop"><span class="prev"><i data-lucide="image"></i></span><span class="ftxt">Choose an image…</span><input type="file" name="image" accept="image/*"></label>
+            </div>
+            <div class="field full"><label>Description</label><textarea name="description" placeholder="What did you build?"></textarea></div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="check"></i> Save project</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="cancelEdit" style="display:none;" onclick="cancelEdit()"><i data-lucide="x"></i> Cancel edit</button>
+        </div>
+    </form>
+</div>
+
+<div class="panel">
+    <div class="panel-head"><i data-lucide="list"></i><h3>Existing projects</h3></div>
+    <div class="items">
+        {% if projects %}
+            {% for p in projects %}
+            <div class="item">
+                <span class="thumb">
+                    {% if p.image %}{% set pi = p.image if p.image.startswith('http') else url_for('static', filename='uploads/' + p.image.replace('uploads/', '')) %}<img src="{{ pi }}" alt="">{% else %}<i data-lucide="folder-git-2"></i>{% endif %}
+                </span>
+                <div class="meta"><h4>{{ p.title }}</h4><p>{{ p.description or '' }}</p></div>
+                <div class="ops">
+                    <button class="op-btn" title="Edit" onclick="fillEdit(this)"
+                        data-id="{{ p.id }}" data-title="{{ p.title|e }}" data-description="{{ p.description|e }}" data-github_link="{{ p.github_link|e }}"><i data-lucide="pencil"></i></button>
+                    <form method="POST" action="{{ url_for('delete_project', id=p.id) }}" style="display:inline;" onsubmit="return confirm('Delete this project?');">
+                        <button class="op-btn danger" type="submit" title="Delete"><i data-lucide="trash-2"></i></button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty"><i data-lucide="folder-git-2"></i><p>No projects yet.</p></div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.EDIT_BASE = "/edit_project/";
+    window.ADD_ACTION = "{{ url_for('add_project') }}";
+    window.ADD_TITLE = "Add a Project"; window.ADD_SUBMIT = "Save project"; window.ENTITY_LABEL = "Project";
+</script>
+{% endblock %}

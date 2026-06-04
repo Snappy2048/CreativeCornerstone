@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-accent="aurora">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in — Creative Cornerstone</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    {% include 'flash_messages.html' %}
+    <div class="bg-orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+
+    <div class="login-screen">
+        <form class="login-card" method="POST" action="{{ url_for('login') }}">
+            <div class="mark"><i data-lucide="rocket"></i></div>
+            <h2>My Dashboard</h2>
+            <p class="sub">Sign in to manage the Creative Cornerstone</p>
+            <div class="field"><label>Username</label><input type="text" name="username" autocomplete="username" placeholder="Your username" required></div>
+            <div class="field"><label>Password</label><input type="password" name="password" autocomplete="current-password" placeholder="Your password" required></div>
+            <button class="btn btn-primary" type="submit">Sign In <i data-lucide="log-in"></i></button>
+            <p class="login-note"><a href="{{ url_for('index') }}" style="color:var(--accent);">&larr; Back to site</a></p>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>document.addEventListener("DOMContentLoaded", function(){ if(window.lucide) lucide.createIcons(); });</script>
+</body>
+</html>

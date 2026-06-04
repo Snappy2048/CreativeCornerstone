@@ -1,0 +1,41 @@
+{% extends "admin_base.html" %}
+{% block title %}Profile — My Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Profile</h1>
+<p class="page-sub">Edit your homepage bio, avatar, and account.</p>
+
+<div class="panel accent-edge">
+    <div class="panel-head"><i data-lucide="user"></i><h3>About you</h3></div>
+    <form method="POST" action="{{ url_for('update_profile') }}" enctype="multipart/form-data">
+        <div class="form-grid">
+            <div class="field"><label>Username</label><input type="text" name="username" value="{{ user.username if user else '' }}"></div>
+            <div class="field"><label>Display name</label><input type="text" name="name" value="{{ user.name if user else '' }}" placeholder="Your name"></div>
+            <div class="field full"><label>About</label><textarea name="about" placeholder="Tell your story...">{{ user.about if user else '' }}</textarea></div>
+            <div class="field"><label>Skills <span class="hint">(comma separated)</span></label><input type="text" name="skills" value="{{ user.skills if user else '' }}" placeholder="Python, Scratch"></div>
+            <div class="field"><label>Hobbies <span class="hint">(comma separated)</span></label><input type="text" name="hobbies" value="{{ user.hobbies if user else '' }}" placeholder="Gaming, Coding"></div>
+            <div class="field full"><label>Avatar</label>
+                <label class="file-drop">
+                    <span class="prev">
+                        {% if user and user.avatar %}{% set av = user.avatar if user.avatar.startswith('http') else url_for('static', filename='uploads/' + user.avatar.replace('uploads/', '')) %}<img src="{{ av }}" alt="">{% else %}<i data-lucide="image"></i>{% endif %}
+                    </span>
+                    <span class="ftxt">Choose an image…</span><input type="file" name="avatar" accept="image/*">
+                </label>
+            </div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn btn-primary btn-sm"><i data-lucide="check"></i> Save profile</button></div>
+    </form>
+</div>
+
+<div class="panel">
+    <div class="panel-head"><i data-lucide="key-round"></i><h3>Change password</h3></div>
+    <form method="POST" action="{{ url_for('change_password') }}">
+        <div class="form-grid">
+            <div class="field full"><label>Current password</label><input type="password" name="current_password" required></div>
+            <div class="field"><label>New password</label><input type="password" name="new_password" required></div>
+            <div class="field"><label>Confirm new password</label><input type="password" name="confirm_password" required></div>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn btn-primary btn-sm"><i data-lucide="check"></i> Update password</button></div>
+    </form>
+</div>
+{% endblock %}

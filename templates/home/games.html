@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Ctrl+Alt Achieve — Creative Cornerstone{% endblock %}
+
+{% block content %}
+<section class="section container" style="padding-top: calc(var(--nav-h) + 60px);">
+    <div class="head reveal">
+        <span class="eyebrow"><span class="dot"></span> Arcade</span>
+        <h2>Ctrl+Alt <span class="grad-text">Achieve</span></h2>
+        <p>I was brainstorming names for my games page and couldn't find the perfect one. Then I asked ChatGPT for suggestions, and one stood out: 'Cntr.' It's a great fit — my business is all about money, and it captures the iconic sound of a cash register: Cha-Ching!</p>
+    </div>
+
+    <div class="grid cols-3">
+        {% if games %}
+            {% for game in games %}
+            <div class="card reveal" data-delay="{{ (loop.index0 % 6) * 80 }}">
+                {% if game.image %}
+                    {% set gimg = game.image if game.image.startswith('http') else url_for('static', filename='uploads/' + game.image.replace('uploads/', '')) %}
+                    <div class="thumb"><img src="{{ gimg }}" alt="{{ game.title }}"></div>
+                {% else %}
+                    <div class="thumb"><span class="ph"><i data-lucide="gamepad-2"></i></span></div>
+                {% endif %}
+                <div class="card-body">
+                    <span class="tag">Game</span>
+                    <h3>{{ game.title }}</h3>
+                    <p>{{ game.description }}</p>
+                    <div class="spacer"></div>
+                    <button class="card-btn"
+                        onclick='openGameModal({{ game.title|tojson }}, {{ (game.description or "")|tojson }}, {{ (game.embed_code or "")|tojson }}, {{ (game.link or "")|tojson }})'>
+                        <i data-lucide="play"></i> Play Now
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="card" style="grid-column:1/-1;"><div class="card-body" style="text-align:center;padding:60px;">
+                <i data-lucide="ghost" style="width:54px;height:54px;margin:0 auto 14px;color:var(--accent);"></i>
+                <h3>No games yet</h3><p>The arcade opens soon!</p>
+            </div></div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="modal-overlay" id="gameModal">
+    <div class="modal">
+        <div class="modal-head">
+            <div><h3 id="gameTitle">Game Title</h3><p id="gameDesc"></p></div>
+            <button class="icon-btn" onclick="closeGameModal()" aria-label="Close"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body" id="gameBody"></div>
+    </div>
+</div>
+{% endblock %}

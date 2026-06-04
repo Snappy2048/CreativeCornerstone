@@ -1,0 +1,36 @@
+{% extends "admin_base.html" %}
+{% block title %}Home — My Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Welcome back{% if user and user.name %}, {{ user.name }}{% endif %} 👋</h1>
+<p class="page-sub">Here's everything on the Creative Cornerstone right now.</p>
+
+<div class="stat-grid">
+    <div class="stat-card"><div class="ic"><i data-lucide="pen-line"></i></div><div class="n">{{ counts.blogs if counts else 0 }}</div><div class="l">Blog posts</div></div>
+    <div class="stat-card"><div class="ic"><i data-lucide="gamepad-2"></i></div><div class="n">{{ counts.games if counts else 0 }}</div><div class="l">Games</div></div>
+    <div class="stat-card"><div class="ic"><i data-lucide="folder-git-2"></i></div><div class="n">{{ counts.projects if counts else 0 }}</div><div class="l">Projects</div></div>
+    <div class="stat-card"><div class="ic"><i data-lucide="user"></i></div><div class="n" style="font-size:1.2rem;">{{ user.username if user and user.username else 'admin' }}</div><div class="l">Signed in</div></div>
+</div>
+
+<div class="panel">
+    <div class="panel-head"><i data-lucide="zap"></i><h3>Quick actions</h3></div>
+    <div class="form-actions" style="margin:0;">
+        <a class="btn btn-primary btn-sm" href="{{ url_for('blogs') }}"><i data-lucide="plus"></i> New blog</a>
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('games') }}"><i data-lucide="plus"></i> New game</a>
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('projects') }}"><i data-lucide="plus"></i> New project</a>
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('products') }}"><i data-lucide="plus"></i> New product</a>
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('profile') }}"><i data-lucide="user"></i> Edit profile</a>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-head"><i data-lucide="external-link"></i><h3>Your site</h3></div>
+    <p style="color:var(--muted);margin-bottom:16px;">View the live public pages your visitors see.</p>
+    <div class="form-actions" style="margin:0;">
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('index') }}" target="_blank"><i data-lucide="home"></i> Home</a>
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('home_games') }}" target="_blank"><i data-lucide="gamepad-2"></i> Games</a>
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('home_blogs') }}" target="_blank"><i data-lucide="pen-line"></i> Blog</a>
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('home_projects') }}" target="_blank"><i data-lucide="folder-git-2"></i> Projects</a>
+    </div>
+</div>
+{% endblock %}

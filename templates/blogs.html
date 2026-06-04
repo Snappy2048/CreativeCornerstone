@@ -1,0 +1,60 @@
+{% extends "admin_base.html" %}
+{% block title %}Blogs — My Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Blogs</h1>
+<p class="page-sub">Write and manage your blog posts.</p>
+
+<div class="panel accent-edge">
+    <div class="panel-head"><i data-lucide="pen-line"></i><h3 id="formTitle">Write a New Blog</h3></div>
+    <form id="entityForm" method="POST" action="{{ url_for('add_blog') }}" enctype="multipart/form-data">
+        <div class="form-grid">
+            <div class="field"><label>Blog title</label><input type="text" name="title" required placeholder="Enter title..."></div>
+            <div class="field"><label>Thumbnail image</label>
+                <label class="file-drop"><span class="prev"><i data-lucide="image"></i></span><span class="ftxt">Choose a file…</span><input type="file" name="thumbnail" accept="image/*"></label>
+            </div>
+            <div class="field full"><label>YouTube link <span class="hint">(optional)</span></label><input type="url" name="youtube_link" placeholder="https://www.youtube.com/watch?v=..."></div>
+            <div class="field full"><label>Content</label><textarea name="content" required placeholder="Write here..."></textarea></div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="send"></i> Publish blog</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="cancelEdit" style="display:none;" onclick="cancelEdit()"><i data-lucide="x"></i> Cancel edit</button>
+        </div>
+    </form>
+</div>
+
+<div class="panel">
+    <div class="panel-head"><i data-lucide="list"></i><h3>Existing posts</h3></div>
+    <div class="items">
+        {% if blogs %}
+            {% for b in blogs %}
+            <div class="item">
+                <span class="thumb">
+                    {% if b.youtube_link %}<i data-lucide="youtube"></i>
+                    {% elif b.thumbnail %}{% set bi = b.thumbnail if b.thumbnail.startswith('http') else url_for('static', filename='uploads/' + b.thumbnail.replace('uploads/', '')) %}<img src="{{ bi }}" alt="">
+                    {% else %}<i data-lucide="pen-line"></i>{% endif %}
+                </span>
+                <div class="meta"><h4>{{ b.title }}</h4><p>{{ b.created_at }}</p></div>
+                <div class="ops">
+                    <button class="op-btn" title="Edit" onclick="fillEdit(this)"
+                        data-id="{{ b.id }}" data-title="{{ b.title|e }}" data-content="{{ b.content|e }}" data-youtube_link="{{ b.youtube_link|e }}"><i data-lucide="pencil"></i></button>
+                    <form method="POST" action="{{ url_for('delete_blog', id=b.id) }}" style="display:inline;" onsubmit="return confirm('Delete this post?');">
+                        <button class="op-btn danger" type="submit" title="Delete"><i data-lucide="trash-2"></i></button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty"><i data-lucide="pen-line"></i><p>No posts yet.</p></div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.EDIT_BASE = "/edit_blog/";
+    window.ADD_ACTION = "{{ url_for('add_blog') }}";
+    window.ADD_TITLE = "Write a New Blog"; window.ADD_SUBMIT = "Publish blog"; window.ENTITY_LABEL = "Blog";
+</script>
+{% endblock %}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-accent="aurora">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Dashboard — Creative Cornerstone{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% include 'flash_messages.html' %}
+    <div class="bg-orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+
+    <div class="dash">
+        <div class="sidebar-backdrop" id="backdrop"></div>
+        <aside class="sidebar" id="sidebar">
+            <a href="{{ url_for('index') }}" class="brand"><span class="mark"><i data-lucide="rocket"></i></span> My Dashboard</a>
+            <nav class="side-nav">
+                <a href="{{ url_for('dashboard') }}" class="side-link {{ 'active' if request.endpoint == 'dashboard' else '' }}"><i data-lucide="layout-dashboard"></i> Home</a>
+                <a href="{{ url_for('games') }}" class="side-link {{ 'active' if request.endpoint == 'games' else '' }}"><i data-lucide="gamepad-2"></i> Games</a>
+                <a href="{{ url_for('blogs') }}" class="side-link {{ 'active' if request.endpoint == 'blogs' else '' }}"><i data-lucide="pen-line"></i> Blogs</a>
+                <a href="{{ url_for('products') }}" class="side-link {{ 'active' if request.endpoint == 'products' else '' }}"><i data-lucide="package"></i> Products</a>
+                <a href="{{ url_for('projects') }}" class="side-link {{ 'active' if request.endpoint == 'projects' else '' }}"><i data-lucide="folder-git-2"></i> Projects</a>
+                <a href="{{ url_for('profile') }}" class="side-link {{ 'active' if request.endpoint == 'profile' else '' }}"><i data-lucide="user"></i> Profile</a>
+            </nav>
+            <div class="side-foot">
+                <a href="{{ url_for('index') }}" class="side-link"><i data-lucide="external-link"></i> View site</a>
+                <a href="{{ url_for('logout') }}" class="side-link"><i data-lucide="log-out"></i> Logout</a>
+            </div>
+        </aside>
+
+        <div class="dash-main">
+            <div class="topbar">
+                <div class="title"><button class="icon-btn menu-btn" id="menuBtn"><i data-lucide="menu"></i></button> Creative Cornerstone</div>
+                <div class="actions">
+                    <div class="palette-wrap">
+                        <button class="icon-btn" id="paletteToggle" aria-label="Change color theme"><i data-lucide="palette"></i></button>
+                        <div class="palette-menu" id="paletteMenu">
+                            <span class="swatch" data-set="aurora" title="Aurora"></span>
+                            <span class="swatch" data-set="sunset" title="Sunset"></span>
+                            <span class="swatch" data-set="emerald" title="Emerald"></span>
+                            <span class="swatch" data-set="ocean" title="Ocean"></span>
+                        </div>
+                    </div>
+                    <button class="icon-btn" id="themeToggle" aria-label="Toggle light/dark"><i data-lucide="sun" class="sun"></i><i data-lucide="moon" class="moon"></i></button>
+                    <a href="{{ url_for('index') }}" class="icon-btn" title="View site"><i data-lucide="external-link"></i></a>
+                    <a href="{{ url_for('logout') }}" class="icon-btn" title="Logout"><i data-lucide="log-out"></i></a>
+                </div>
+            </div>
+            <div class="dash-content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

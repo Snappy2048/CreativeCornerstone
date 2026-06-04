@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Creative Cornerstone{% if profile and profile.name %} — {{ profile.name }}{% endif %}{% endblock %}
+
+{% block content %}
+<section class="hero container">
+    <div class="hero-grid">
+        <div>
+            <span class="eyebrow reveal"><span class="dot"></span> Hello World</span>
+            <h1 class="reveal" data-delay="80">I'm
+                <span class="grad-text tw" id="typewriter"
+                      data-phrases='["{{ (profile.name if profile and profile.name else "Me")|e }}.", "a Gamer.", "a Developer.", "a Dreamer."]'></span>
+            </h1>
+            <p class="lead reveal" data-delay="160">
+                {{ profile.about if profile and profile.about else "Welcome to my digital playground! I love building cool things and exploring new technologies." }}
+            </p>
+            <div class="hero-cta reveal" data-delay="240">
+                <a href="{{ url_for('home_projects') }}" class="btn btn-primary">See My Work <i data-lucide="arrow-right"></i></a>
+                <a href="{{ url_for('home_games') }}" class="btn btn-ghost">Play My Games <i data-lucide="gamepad-2"></i></a>
+            </div>
+            {% set hobbies = (profile.hobbies.split(',') if profile and profile.hobbies else []) %}
+            <div class="stats reveal" data-delay="320">
+                <div class="stat"><div class="n"><span data-count="{{ games|length if games else 0 }}">0</span></div><div class="l">Games built</div></div>
+                <div class="stat"><div class="n"><span data-count="{{ blogs|length if blogs else 0 }}">0</span></div><div class="l">Blog posts</div></div>
+                <div class="stat"><div class="n"><span data-count="{{ hobbies|length }}" data-suffix="+">0</span></div><div class="l">Hobbies</div></div>
+            </div>
+        </div>
+        <div class="hero-visual reveal" data-delay="160">
+            <div class="avatar-frame">
+                {% if profile and profile.avatar %}
+                    {% if profile.avatar.startswith('http') %}
+                        {% set avatar_src = profile.avatar %}
+                    {% elif 'uploads/' in profile.avatar %}
+                        {% set avatar_src = url_for('static', filename=profile.avatar) %}
+                    {% else %}
+                        {% set avatar_src = url_for('static', filename='uploads/' + profile.avatar) %}
+                    {% endif %}
+                    <img src="{{ avatar_src }}" alt="{{ profile.name if profile else 'Avatar' }}"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='grid';">
+                    <div class="fallback" style="display:none;">{{ (profile.name[0]|upper) if profile and profile.name else 'A' }}</div>
+                {% else %}
+                    <div class="fallback" style="display:grid;">{{ (profile.name[0]|upper) if profile and profile.name else 'A' }}</div>
+                {% endif %}
+            </div>
+            {% if hobbies|length > 0 %}<span class="chip c1"><i data-lucide="gamepad-2"></i> {{ hobbies[0].strip() }}</span>{% endif %}
+            {% if hobbies|length > 1 %}<span class="chip c2"><i data-lucide="code-xml"></i> {{ hobbies[1].strip() }}</span>{% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="section container">
+    <div class="head reveal">
+        <span class="eyebrow"><span class="dot"></span> Watch</span>
+        <h2>Featured <span class="grad-text">Video</span></h2>
+        <p>Check out my latest content!</p>
+    </div>
+    <div class="video-shell reveal" data-delay="120">
+        <div class="ratio">
+            <iframe src="https://www.youtube.com/embed/yegW6Bh2q90?si=mo51PG8WJJ1iQPXw" title="Featured video" loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+    </div>
+</section>
+
+<section class="section container">
+    <div class="head reveal">
+        <span class="eyebrow"><span class="dot"></span> Explore</span>
+        <h2>Around the <span class="grad-text">Cornerstone</span></h2>
+        <p>Jump into the games, dig through the build logs, or browse the projects.</p>
+    </div>
+    <div class="grid cols-3">
+        <a href="{{ url_for('home_games') }}" class="card reveal">
+            <div class="thumb"><span class="ph"><i data-lucide="gamepad-2"></i></span></div>
+            <div class="card-body"><span class="tag">Ctrl+Alt Achieve</span><h3>Games</h3><p>Scratch projects and arcade-style games I've built — jump in and play.</p><div class="spacer"></div><span class="read-more">Open <i data-lucide="arrow-right"></i></span></div>
+        </a>
+        <a href="{{ url_for('home_blogs') }}" class="card reveal" data-delay="100">
+            <div class="thumb"><span class="ph"><i data-lucide="pen-line"></i></span></div>
+            <div class="card-body"><span class="tag">Blog</span><h3>Stories</h3><p>My journey, summaries, and thoughts on tech, gaming, and growing up.</p><div class="spacer"></div><span class="read-more">Read <i data-lucide="arrow-right"></i></span></div>
+        </a>
+        <a href="{{ url_for('home_projects') }}" class="card reveal" data-delay="200">
+            <div class="thumb"><span class="ph"><i data-lucide="code-xml"></i></span></div>
+            <div class="card-body"><span class="tag">Project</span><h3>Builds</h3><p>Coding adventures, from small scripts to full applications.</p><div class="spacer"></div><span class="read-more">Browse <i data-lucide="arrow-right"></i></span></div>
+        </a>
+    </div>
+</section>
+{% endblock %}
